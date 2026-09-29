@@ -1,0 +1,15 @@
+# Compiled Java
+*.class
+out/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Course handout (not ours to publish)
+*.pdf
