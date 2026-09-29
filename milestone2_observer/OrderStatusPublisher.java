@@ -6,6 +6,7 @@ import java.util.List;
 public class OrderStatusPublisher implements Subject {
     private List<Observer> observers;
     private String orderStatus, orderId;
+    private double orderAmount;
 
     public OrderStatusPublisher() {
         observers = new ArrayList<>();
@@ -31,7 +32,14 @@ public class OrderStatusPublisher implements Subject {
     public void setOrderStatus(String orderId, String orderStatus) {
         this.orderId = orderId;
         this.orderStatus = orderStatus;
+        
         notifyObservers();
+    }
+
+    public void setOrderStatus(String orderId, String orderStatus, double orderAmount) {
+       
+        this.orderAmount = orderAmount;
+        setOrderStatus(orderId, orderStatus); //reusing the old method.
     }
 
     public String getOrderStatus() {
@@ -40,5 +48,9 @@ public class OrderStatusPublisher implements Subject {
 
     public String getOrderId() {
         return orderId;
+    }
+
+    public double getOrderAmount() {
+        return orderAmount;
     }
 }
