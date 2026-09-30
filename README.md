@@ -1,20 +1,18 @@
-# BrewHub Case Study — Design Patterns Write-Up
+# BrewHub Case Study
 
-| | |
-|---|---|
-| **Course** | Software Design Patterns  |
-| **Textbook** | *Head First Design Patterns*, Chapters 1–5 |
-| **Repository** | https://github.com/thefr3spirit/brew-hub |
+
+**Course:** Software Design Patterns 
+ **Repository:**  https://github.com/thefr3spirit/brew-hub 
 
 ### Group members
 
 | # | Name | Registration Number |
 |---|---|---|
-| 1 | OGWAL BILL EDWIN | 2023/BSE/126/PS |
-| 2 | *(name)* | *(reg. no.)* |
-| 3 | *(name)* | *(reg. no.)* |
-| 4 | *(name)* | *(reg. no.)* |
-| 5 | *(name)* | *(reg. no.)* |
+| 1 | Ogwal Bill Edwin | 2023/BSE/126/PS |
+| 2 | Emarot Emmanuel  | 2023/BSE/048/PS |
+| 3 | Babirye Proscovia | 2023/BSE/038/PS |
+| 4 | Niwataho Saraphina | 2023/BSE/114/PS |
+| 5 | Ataho Ronnie  | 2023/BSE/028/PS |
 
 ---
 
@@ -25,7 +23,7 @@
 | 1 | **Strategy** | Many discount schemes at checkout, with more coming; an if/else chain in `Order` was hard to maintain | `milestone1_strategy/Order.java`, `PricingStrategy.java` |
 | 2 | **Observer** | Kitchen display, customer app and inventory tracker must react when an order's status changes, without the order code knowing about them | `milestone2_observer/OrderStatusPublisher.java` |
 | 3 | **Decorator** | Any drink can have any combination of condiments; one subclass per combination is impossible | `milestone3_decorator/CondimentDecorator.java` |
-| 4 | **Factory Method + Abstract Factory** | Each regional hub must use only its own region's beans, milk and cups — never a mix | `milestone4_factory/RoastingHub.java`, `IngredientFactory.java` |
+| 4 | **Factory Method + Abstract Factory** | Each regional hub must use only its own region's beans, milk and cups, never a mix | `milestone4_factory/RoastingHub.java`, `IngredientFactory.java` |
 | 5 | **Singleton** | Exactly one thread-safe ledger must record every payment across all hubs | `milestone5_singleton/OrderLedger.java` |
 | Stretch | **Singleton + Observer** | The ledger records a payment only once an order is "ready" | `stretch_goal/Demo.java` |
 
@@ -43,13 +41,13 @@ java stretch_goal.Demo
 
 ---
 
-## Milestone 1 — Strategy: Pricing & Loyalty
+## Milestone 1: Strategy.
 
 ### Problem
-BrewHub has several discount schemes — student, happy hour, loyalty tier and no discount — and new ones keep arriving. The first draft put them all in one if/else chain inside `Order`, so every new discount meant editing `Order` again.
+BrewHub has several discount schemes; student, happy hour, loyalty tier and no discount. And new ones keep arriving. The first draft put them all in one if/else chain inside `Order`, so every new discount meant editing `Order` again.
 
 ### The pattern in one sentence
-**Strategy** puts each algorithm (here, each pricing rule) in its own class behind a common interface, so the object that uses it can swap between them — even while the program is running.
+**Strategy** puts each algorithm (in this case, each pricing rule) in its own class behind a common interface, so the object that uses it can swap between them even while the program is running.
 
 ### Class diagram
 
@@ -129,19 +127,21 @@ Loyalty Gold: 4000.0
 ```
 
 ### Justification — why not just use if/else?
-With if/else, every new discount means opening `Order` and adding another branch, so the class keeps growing and every edit risks breaking discounts that already worked. It also mixes all the pricing rules together in one place, which makes them harder to read and test. With the Strategy pattern, each rule lives in its own small class, and `Order` never changes when a new discount is added — we just write a new class. The strategy can also be swapped while the program is running, which an if/else hard-coded into `Order` doesn't handle cleanly.
+- With if/else, every new discount means opening `Order` and adding another branch, so the class keeps growing and every edit risks breaking discounts that already worked. 
+- It also mixes all the pricing rules together in one place, which makes them harder to read and test. With the Strategy pattern, each rule lives in its own small class, and `Order` never changes when a new discount is added, we just write a new class. 
+- The strategy can also be swapped while the program is running, which an if/else hard-coded into `Order` doesn't handle cleanly.
 
 ### Book principles applied
-- **Encapsulate what varies** — the pricing rules change often, so they are pulled out of `Order`.
-- **Program to an interface, not an implementation** — `Order` only knows `PricingStrategy`.
-- **Favor composition over inheritance** — an order *has a* pricing strategy; there is no `StudentOrder` or `HappyHourOrder` subclass.
+- **Encapsulate what varies:** the pricing rules change often, so they are pulled out of `Order`.
+- **Program to an interface, not an implementation:** `Order` only knows `PricingStrategy`.
+- **Favor composition over inheritance:** an order *has a* pricing strategy; there is no `StudentOrder` or `HappyHourOrder` subclass.
 
 ---
 
-## Milestone 2 — Observer: Live Order & Inventory Dashboards
+## Milestone 2: Observer.
 
 ### Problem
-Every order moves through states — queued, brewing, ready — and three systems must react immediately: the kitchen display, the customer's app and the inventory tracker. The order code shouldn't need to know about any of them, and new subscribers should be easy to add.
+Every order moves through states (queued, brewing, ready) and three systems must react immediately: the kitchen display, the customer's app and the inventory tracker. The order code shouldn't need to know about any of them, and new subscribers should be easy to add.
 
 ### The pattern in one sentence
 **Observer** lets one object (the subject) keep a list of dependents (observers) and notify all of them automatically when its state changes, without knowing what they are.
@@ -238,23 +238,23 @@ Inventory Tracker: Order A1 is now brewing
 Customer Notifier: Your order A1 is now ready
 ```
 
-### Justification — push or pull?
+### Justification for push or pull?
 We chose **pull**. `update()` sends no data; it only tells observers that something changed, and each observer asks the publisher for what it needs using `getOrderId()` and `getOrderStatus()`.
 
-Push would have been simpler here, since the data is small. We chose pull because it copes better with change: if BrewHub adds more order data later, we only add a getter to the publisher — the `Observer` interface and the existing observers don't change, and each observer takes only the data it uses. This paid off in the stretch goal, where we added an order amount without touching any existing observer (see [Stretch Goal](#stretch-goal--singleton--observer-together)).
+Push would have been simpler here, since the data is small. We chose pull because it copes better with change: if BrewHub adds more order data later, we only add a getter to the publisher, the `Observer` interface and the existing observers don't change, and each observer takes only the data it uses. This paid off in the stretch goal, where we added an order amount without touching any existing observer (see [Stretch Goal](#stretch-goal--singleton--observer-together)).
 
 ### Book principle applied
 - **Strive for loosely coupled designs between objects that interact** — the publisher only knows its observers are `Observer`s. New observers can be added without changing the publisher.
 
 ---
 
-## Milestone 3 — Decorator: Build-Your-Own Drink Pricing
+## Milestone 3: Decorator.
 
 ### Problem
-Customers can add any condiments — extra shot, oat milk, vanilla, whipped cream — to any base drink, and the combinations are unlimited. A subclass for every combination would mean hundreds of classes.
+Customers can add any condiments like extra shot, oat milk, vanilla, whipped cream to any base drink, and the combinations are unlimited. A subclass for every combination would mean hundreds of classes.
 
 ### The pattern in one sentence
-**Decorator** wraps an object in other objects of the same type, each adding its own behaviour (here, cost and description) before or after passing the call to the object inside.
+**Decorator** wraps an object in other objects of the same type, each adding its own behaviour (in this case, cost and description) before or after passing the call to the object inside.
 
 ### Class diagram
 
@@ -334,15 +334,15 @@ Cost: 15000.0
 ```
 Check: 6000 + 2000 + 1000 + 1500 + 500 + 2000 = 13000, and 8000 + 3000 + 2000 + 2000 = 15000. The description lists every layer in the order it was added.
 
-### Justification — one thing this makes easy
+### Justification 
 Adding the same condiment more than once. The demo makes a Bushera with double caramel just by wrapping it in `Caramel` twice; with subclasses, "double caramel" would need yet another class for every drink. Adding a new condiment is also easy: one new decorator class works with every drink, and no existing class changes.
 
 ### Book principle applied
-- **Classes should be open for extension, but closed for modification** (Open-Closed Principle) — we added Bushera, Caramel and Chocolate without editing any existing class.
+- **Classes should be open for extension, but closed for modification** (Open-Closed Principle): we added Bushera, Caramel and Chocolate without editing any existing class.
 
 ---
 
-## Milestone 4 — Factory Method & Abstract Factory: Multi-Region Sourcing
+## Milestone 4: Factory Method & Abstract Factory.
 
 ### Problem
 BrewHub has roasting hubs in Seattle and Bogotá (we added Kampala as the third region). Each hub must use only its own region's beans, milk and cups; mixing them breaks a regional sourcing contract.
@@ -384,7 +384,7 @@ classDiagram
 This mirrors the PizzaStore from Chapter 4: `RoastingHub` is `PizzaStore`, `SeattleHub` is `NYPizzaStore`, and `SeattleIngredientFactory` is `NYPizzaIngredientFactory`.
 
 ### Key code
-**Abstract Factory** — one factory makes the whole Seattle family. *(see `milestone4_factory/SeattleIngredientFactory.java`)*
+**Abstract Factory** one factory makes the whole Seattle family. *(see `milestone4_factory/SeattleIngredientFactory.java`)*
 
 ```java
 public class SeattleIngredientFactory implements IngredientFactory {
@@ -394,7 +394,7 @@ public class SeattleIngredientFactory implements IngredientFactory {
 }
 ```
 
-**Factory Method** — the parent class does the work but leaves `createBeans()` to subclasses. *(see `milestone4_factory/RoastingHub.java`)*
+**Factory Method** the parent class does the work but leaves `createBeans()` to subclasses. *(see `milestone4_factory/RoastingHub.java`)*
 
 ```java
 public abstract class RoastingHub {
@@ -440,8 +440,8 @@ Preparing drink with Bogota Beans, Bogota Milk, and Bogota Cup
 Preparing drink with Bogota Beans, Bogota Milk, and Bogota Cup
 ```
 
-### Justification — why parts can never be mixed
-A hub gets all three parts from the **same** factory object, and each factory can only make one region's parts. `createBeans()` also asks the factory instead of calling `new SeattleBeans()` directly. So when the demo swaps the Seattle hub's factory to Bogotá, the whole family changes together — all Bogotá parts, never a mix.
+### Justification 
+A hub gets all three parts from the **same** factory object, and each factory can only make one region's parts. `createBeans()` also asks the factory instead of calling `new SeattleBeans()` directly. So when the demo swaps the Seattle hub's factory to Bogotá, the whole family changes together, all Bogotá parts, never a mix.
 
 Adding Kampala only needed new classes (`KampalaBeans`, `KampalaMilk`, `KampalaCup`, `KampalaIngredientFactory`, `KampalaHub`); no existing class changed.
 
@@ -450,7 +450,7 @@ Adding Kampala only needed new classes (`KampalaBeans`, `KampalaMilk`, `KampalaC
 
 ---
 
-## Milestone 5 — Singleton: One Central Order Ledger
+## Milestone 5: Singleton.
 
 ### Problem
 BrewHub needs exactly one `OrderLedger` recording every paid transaction across all hubs. Two ledgers would split or double-count revenue. Each hub's checkout runs on its own thread, so the ledger must be thread-safe.
@@ -520,25 +520,25 @@ Transactions: 3000 (expected 3000)
 Total revenue: 30000.0 (expected 30000.0)
 ```
 
-### Justification — which fix, and why
+### Justification: which fix, and why
 We chose **eager creation** out of the book's three fixes (synchronized, eager, double-checked locking).
 
-`getInstance()` is called on every checkout, on every hub's thread, so it is called very often. With the `synchronized` fix, every one of those calls would wait for a lock, even though the ledger only needs to be created once. Double-checked locking avoids that, but it is harder to write and easy to get wrong. Eager creation is the simplest safe option: the JVM creates the ledger once when the class loads, so `getInstance()` just returns it with no locking. Its usual downside — creating the object even if it's never used — doesn't matter, because BrewHub always needs the ledger.
+`getInstance()` is called on every checkout, on every hub's thread, so it is called very often. With the `synchronized` fix, every one of those calls would wait for a lock, even though the ledger only needs to be created once. Double-checked locking avoids that, but it is harder to write and easy to get wrong. Eager creation is the simplest safe option: the JVM creates the ledger once when the class loads, so `getInstance()` just returns it with no locking. Its usual downside creating the object even if it's never used doesn't matter, because BrewHub always needs the ledger.
 
-Eager creation only makes *creating* the ledger thread-safe. Updating it is a separate problem, which is why `recordTransaction()` and the getters are still `synchronized` — otherwise two hubs paying at the same moment could overwrite each other and lose a payment.
+Eager creation only makes *creating* the ledger thread-safe. Updating it is a separate problem, which is why `recordTransaction()` and the getters are still `synchronized` otherwise two hubs paying at the same moment could overwrite each other and lose a payment.
 
-### Bonus — what would go wrong without a Singleton
-If each hub could call `new OrderLedger()`, Seattle's payments would go into one ledger and Bogotá's into another, so no single ledger would show the real revenue. If the same payment were recorded in two ledgers and they were added up at reconciliation, that revenue would be counted twice — the same kind of bug as two ChocolateBoiler objects both thinking the boiler is empty and filling it twice.
+### Bonus: what would go wrong without a Singleton
+If each hub could call `new OrderLedger()`, Seattle's payments would go into one ledger and Bogotá's into another, so no single ledger would show the real revenue. If the same payment were recorded in two ledgers and they were added up at reconciliation, that revenue would be counted twice, the same kind of bug as two ChocolateBoiler objects both thinking the boiler is empty and filling it twice.
 
 ### Book principle applied
 Chapter 5 does not add a new OO principle. Singleton applies **encapsulation** to object *creation*: the private constructor puts the class itself in control of how many instances exist.
 
 ---
 
-## Stretch Goal — Singleton + Observer Together
+## Stretch Goal: Singleton + Observer Together
 
 ### How they work together
-`OrderLedger` (the Singleton from Milestone 5) now also `implements Observer` (from Milestone 2). It subscribes to `OrderStatusPublisher` like any other observer, but only records a payment when the order reaches **"ready"**. The stretch demo imports and reuses the Milestone 2 and 5 classes — no code is copied.
+`OrderLedger` (the Singleton from Milestone 5) now also `implements Observer` (from Milestone 2). It subscribes to `OrderStatusPublisher` like any other observer, but only records a payment when the order reaches **"ready"**. The stretch demo imports and reuses the Milestone 2 and 5 classes, no code is copied.
 
 ```mermaid
 classDiagram
@@ -603,19 +603,7 @@ Kitchen Display: Order A2 is now ready
 ```
 
 ### Justification
-- **Why `subscribeToPublisher()` instead of the constructor:** the other observers register in their constructors, but a Singleton's constructor is private, takes no arguments and runs when the class loads — before any publisher exists. So the ledger needs a separate method.
+- **Why `subscribeToPublisher()` instead of the constructor:** the other observers register in their constructors, but a Singleton's constructor is private, takes no arguments and runs when the class loads before any publisher exists. So the ledger needs a separate method.
 - **Why pull paid off:** adding `orderAmount` to the publisher needed no change to the `Observer` interface or to the three existing observers. The Milestone 2 demo still runs unchanged.
 
 ---
-
-## Principles Summary
-
-| Head First principle | Chapter | Where it appears in our code |
-|---|---|---|
-| Identify the aspects that vary and separate them from what stays the same | 1 | M1: pricing rules pulled out of `Order`. M3: condiments separate from base drinks. M4: regional parts separate from hub logic. |
-| Program to an interface, not an implementation | 1 | M1: `Order` uses `PricingStrategy`. M2: publisher uses `Observer`. M4: `RoastingHub` uses `IngredientFactory`, `Beans`, `Milk`, `Cup`. |
-| Favor composition over inheritance | 1 | M1: `Order` *has a* strategy. M3: decorators *wrap* a beverage. M4: a hub *has a* factory. |
-| Strive for loosely coupled designs between objects that interact | 2 | M2: publisher knows nothing about its observers. Stretch: the ledger joins as an observer without the publisher changing. |
-| Classes should be open for extension, but closed for modification | 3 | M3: new drinks/condiments without editing old classes. Also M1 (new discount), M2 (new observer), M4 (new region). |
-| Depend upon abstractions. Do not depend upon concrete classes | 4 | M4: `RoastingHub` never names a concrete region class. |
-| *(Singleton — no new principle; controls instance creation)* | 5 | M5: private constructor + `getInstance()` guarantee one `OrderLedger`. |

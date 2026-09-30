@@ -13,3 +13,4 @@ Thumbs.db
 
 # Course handout (not ours to publish)
 *.pdf
+!BrewHub-Writeup.pdf
