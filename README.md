@@ -76,10 +76,9 @@ classDiagram
     PricingStrategy <|.. LoyaltyTierPricing
 ```
 
-This mirrors SimUDuck from Chapter 1: `Order` is the `Duck`, `PricingStrategy` is `FlyBehavior`, and `setPricingStrategy()` is `setFlyBehavior()`.
 
 ### Key code
-`Order` holds a strategy and delegates to it — there is no if/else. *(see `milestone1_strategy/Order.java`)*
+`Order` holds a strategy and delegates to it, there is no if/else. *(see `milestone1_strategy/Order.java`)*
 
 ```java
 public class Order {
@@ -184,7 +183,7 @@ classDiagram
     OrderStatusPublisher o-- Observer : notifies
 ```
 
-This mirrors the Weather Station from Chapter 2: `OrderStatusPublisher` is `WeatherData`, and the three observers are the displays.
+
 
 ### Key code
 The publisher saves the new status and tells every observer something changed. *(see `milestone2_observer/OrderStatusPublisher.java`)*
@@ -284,7 +283,6 @@ classDiagram
     CondimentDecorator <|-- Chocolate
 ```
 
-This is the Starbuzz Coffee design from Chapter 3. Our additions: **Bushera** (new beverage), **Caramel** and **Chocolate** (new condiments).
 
 ### Key code
 The decorator both *is* a `Beverage` and *has* a `Beverage`. *(see `milestone3_decorator/CondimentDecorator.java`)*
@@ -381,7 +379,7 @@ classDiagram
 
 *(Bogotá and Kampala factories create their own Beans/Milk/Cup the same way; the ingredient interfaces are `Beans`, `Milk` and `Cup`.)*
 
-This mirrors the PizzaStore from Chapter 4: `RoastingHub` is `PizzaStore`, `SeattleHub` is `NYPizzaStore`, and `SeattleIngredientFactory` is `NYPizzaIngredientFactory`.
+
 
 ### Key code
 **Abstract Factory** one factory makes the whole Seattle family. *(see `milestone4_factory/SeattleIngredientFactory.java`)*
@@ -446,7 +444,7 @@ A hub gets all three parts from the **same** factory object, and each factory ca
 Adding Kampala only needed new classes (`KampalaBeans`, `KampalaMilk`, `KampalaCup`, `KampalaIngredientFactory`, `KampalaHub`); no existing class changed.
 
 ### Book principle applied
-- **Dependency Inversion Principle — "Depend upon abstractions. Do not depend upon concrete classes."** `RoastingHub` only knows `Beans`, `Milk`, `Cup` and `IngredientFactory`, never `SeattleBeans` or `BogotaIngredientFactory`.
+- **Dependency Inversion Principle: "Depend upon abstractions. Do not depend upon concrete classes."** `RoastingHub` only knows `Beans`, `Milk`, `Cup` and `IngredientFactory`, never `SeattleBeans` or `BogotaIngredientFactory`.
 
 ---
 
@@ -475,7 +473,7 @@ classDiagram
     OrderLedger --> OrderLedger : instance
 ```
 
-This mirrors the ChocolateBoiler from Chapter 5.
+
 
 ### Key code
 *(see `milestone5_singleton/OrderLedger.java`)*
